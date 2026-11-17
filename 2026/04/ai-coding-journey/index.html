@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>从 GPT-3.5 劝退到 Harness Engineering：我的 AI 编码之路 | Sam&#39;s Cafe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="从 GPT-3.5 在 DPDK 上的幻觉，到让 AI 做主力编码：记录我的 AI 编码实践，以及文档驱动、测试约束与 Harness Engineering 的相遇。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 GPT-3.5 劝退到 Harness Engineering：我的 AI 编码之路">
+<meta property="og:url" content="https://vult137.github.io/2026/04/ai-coding-journey/">
+<meta property="og:site_name" content="Sam&#39;s Cafe">
+<meta property="og:description" content="从 GPT-3.5 在 DPDK 上的幻觉，到让 AI 做主力编码：记录我的 AI 编码实践，以及文档驱动、测试约束与 Harness Engineering 的相遇。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Songyi Wang">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Sam's Cafe" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Sam&#39;s Cafe</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Have a drink!</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://vult137.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ai-coding-journey" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta"><a href="/2026/04/ai-coding-journey/" class="article-date"><time class="dt-published" datetime="2026-04" itemprop="datePublished">2026-04</time></a></div>
+  <div class="article-inner">
+    <header class="article-header"><h1 class="p-name article-title" itemprop="headline name">从 GPT-3.5 劝退到 Harness Engineering：我的 AI 编码之路</h1></header>
+    <div class="e-content article-entry" itemprop="articleBody"><h2 id="起因-又一个-过气技术">起因：又一个"过气技术"？</h2>
+<p>2022年底ChatGPT（基于GPT-3.5）刚出来的时候，说实话我是不屑一顾的。毕竟在那之前的几年里，深度学习领域隔两年就要冒出一个"震撼所有人"的新概念，红个一两个月就快速过气，已经见怪不怪了。我以为这次也一样。</p>
+<p>但没想到，这波AI浪潮居然真的就这么开始了，而且来势之猛远超所有人的预期。</p>
+<p>这篇文章记录了我从2023年初到现在，在AI辅助编码这条路上的摸爬滚打——包括早期被GPT-3.5的幻觉劝退的经历、后来逐渐找到人机协作节奏的过程，以及在实践中独立摸索出的一套方法论。让我兴奋的是，这套方法论后来跟业界提出的 <strong>Harness Engineering</strong> 概念不谋而合。</p>
+<hr>
+<h2 id="一-初见-好奇-尝鲜-然后被劝退-2023">一、初见：好奇、尝鲜、然后被劝退（2023）</h2>
+<p>2023年年初，我实在忍不住了，靠着一个俄罗斯的虚拟号第一次注册了ChatGPT（当时国内用户没法直接注册，这应该是很多人共同的记忆），正式开始了LLM使用的旅程。</p>
+<p>刚开始用的时候完全没往代码、技术方面想，只是跟它进行一些日常对话——问问历史知识、聊聊对某些事件的看法之类的。后来逐渐开始问一些技术上的泛泛问题，比如无线网络的基础概念什么的。现在回想起来，GPT-3.5虽然跟后来的版本比能力差了太多，但那个时候的口吻反而比现在平易近人不少。</p>
+<p><strong>真正的转折点是我把它拉进专业领域之后。</strong></p>
+<p>当时我比较醉心于网络/DPDK（Data Plane Development Kit）方面的技术，于是试着让它帮忙写一些DPDK相关的demo代码。结果——简直是灾难性的体验。生成的代码不仅完全跑不起来，甚至调用了大量根本不存在的API函数。这是早期大语言模型"幻觉"问题的典型表现，但当时的我并不这么理性地看待这件事。</p>
+<p>这段经历直接导致我对AI编码能力的信心降到了冰点，而且这个判断在之后相当长的时间里影响了我的决策。现在回头看，这其实是一个挺经典的认知陷阱：<strong>我因为AI在一个训练数据极度稀缺的小众领域表现拉胯，就对它的整体能力判了死刑。</strong> 这个错误判断让我白白耽误了将近两年。</p>
+<hr>
+<h2 id="二-重新上路-从脚本辅助到AI主力编码-2025">二、重新上路：从脚本辅助到AI主力编码（2025）</h2>
+<h3 id="2-1-Shell脚本-无缝接入的第一步">2.1 Shell脚本：无缝接入的第一步</h3>
+<p>到了腾讯之后，我才逐渐重新意识到AI写代码的功力。</p>
+<p>2025年年初，我开始让AI帮忙写一些脚本类的代码。毕竟编写Shell脚本实在是一件让人痛苦的事，而AI又确实擅长这类模式化的生成任务，可以说是无缝接入了。这次体验让我重新建立了一些信心。</p>
+<h3 id="2-2-Trae初体验-AI辅助的-青铜时代">2.2 Trae初体验：AI辅助的"青铜时代"</h3>
+<p>2025年年中，我开始做一个外包项目，于是下载了字节的Trae（国内版2025年3月发布），用来做AI编码的初尝试。但说实话，当时Trae配的国产模型效果实在不太行（应该是豆包1.5 Pro，具体我已经记不清了），生成的代码质量堪忧。</p>
+<p>所以我当时的编码模式还完全是老路子，加上一点点AI辅助：找一个相近的开源项目，进来东改改、西凑凑，AI主要用来做函数级别的编写以及一些简单的Tab补全。可以说对AI的利用率非常低，产出的东西其实也很一般。</p>
+<p>不过反正这个项目当时只是个demo，效果一般也无所谓。<strong>更重要的是，这段经历为我后面的AI编码打下了一些地基。</strong> 在反复的函数补全交互中，我开始隐隐约约摸到了几条让AI高效、可信工作的规律——虽然当时还说不清楚，但直觉告诉我这里面是有方法论的。</p>
+<h3 id="2-3-GPT-5-2-真正的转折">2.3 GPT-5.2：真正的转折</h3>
+<p>2025年12月，OpenAI发布了GPT-5.2。我在trae里面换上了这个模型，开始真正投入到外包项目的后端开发上。</p>
+<p>这次开发，我从一开始就放弃了之前那种"我为主、AI辅助"的思路，转而让 <strong>AI做主力编码，我做架构师+reviewer</strong>。靠AI强大的知识储备和日渐强悍的编码能力快速出活，同时填补了我自己不太懂的一些领域——比如Docker和Nginx，如果完全让我搞，我可能都不太会用这俩（不得不说AI在这种"帮你快速上手一个陌生工具"的场景下确实很猛）。</p>
+<p>后来我发现即使是同一个模型，使用不同的工具依然会有比较大的差距，我果断切换到了openAI的codex上，用起了codex+GPT-5.3-codex（再后面又换成了5.4）的组合。虽然不如claude code + opus 4.6，但依然是这个时代第二的编码实践，外加上token量大管饱，且无封号的风险。</p>
+<hr>
+<h2 id="三-摸出来的方法论-文档指引方向-测试约束边界">三、摸出来的方法论：文档指引方向，测试约束边界</h2>
+<p>这个项目做到现在已经四个月了。在持续的实践中，我对AI编码的使用套路越来越多，逐渐沉淀出了两条核心方法论。</p>
+<h3 id="3-1-文档驱动-给AI一张-地图">3.1 文档驱动：给AI一张"地图"</h3>
+<p>核心思路很简单：<strong>与其给AI一个虚无缥缈的指令</strong>——"帮我实现一个blabla系统，不要有bug"——<strong>不如给它一套结构化的文档，让它知道该往哪走。</strong></p>
+<p>我在项目中维护了几类文档：</p>
+<div class="table-wrap" role="region" aria-label="文档类型表格" tabindex="0"><table><thead><tr><th scope="col">文档类型</th><th scope="col">干什么用的</th></tr></thead><tbody><tr><td>架构文档</td><td>定义系统整体结构、模块划分、数据怎么流</td></tr><tr><td>API文档</td><td>接口长什么样、请求响应格式、错误码规范</td></tr><tr><td>实现文档</td><td>关键模块的实现思路、技术选型的理由</td></tr><tr><td>运维文档</td><td>日志怎么打、部署怎么编排、监控怎么做</td></tr></tbody></table></div>
+<p>这些文档比那种一句话的prompt高效且实用太多。本质上，它们为AI提供了精确的上下文约束——AI不需要"猜"你想要什么，因为文档已经写清楚了。</p>
+<h3 id="3-2-测试约束-兜住幻觉的安全网">3.2 测试约束：兜住幻觉的安全网</h3>
+<p>如果说文档解决的是"方向对不对"，那测试解决的是"结果靠不靠谱"。</p>
+<p><strong>我认为，在AI编码的项目中，测试比传统人写的项目重要100倍。</strong> 这不是夸张，原因有三个：</p>
+<p><strong>第一，幻觉问题是概率性的，而且无法根治。</strong> LLM的幻觉在可预见的未来不可能完全消除。哪怕幻觉率只有0.1%，对于一个10万行乃至100万行的大项目来说，就意味着可能藏着几百个隐蔽的错误点——放到生产环境里这是不可接受的。</p>
+<p><strong>第二，AI的Bug分布跟人完全不一样。</strong> 人写的项目，Bug的出现其实可预测性非常高，好多时候出了问题你看一眼就能知道哪里炸了。但AI写的代码，经常会在各种奇奇怪怪的地方出Bug——根因还是AI的"思维模式"跟人类完全不同，它不是真正"理解"了你的系统，而是基于概率分布在生成token。</p>
+<p><strong>第三，AI不一定100%理解你的需求。</strong> 很多细节的地方，哪怕没有Bug，实现出来跟你的预期也可能不一样。这种"不算错但不是我想要的"才是最隐蔽的坑。</p>
+<p>基于这些考虑，我的测试至少要覆盖两个层面：</p>
+<ol><li><strong>单元测试（Unit Test）</strong>：函数级别的基本验证，确保每个最小单元的输入输出符合预期</li><li><strong>黑盒测试（E2E Test）</strong>：以用户视角对整体系统做端到端的测试，验证完整的业务流程</li></ol>
+<p>更进一步，还可以针对每个Service补充服务级别的集成测试，以及把这些东西都接入CI/CD流水线，跟每一次代码提交挂钩。</p>
+<p>（不过说实话，我觉得CI/CD中"测试不过不让合并"这套机制，本质上是对人类开发者的流程约束。在AI编码的场景下，这个东西的形态可能得变一变——约束的对象从人变成了AI Agent，方式也需要更加自动化和实时化，而不是简单地照搬传统CI/CD的那套逻辑。）</p>
+<hr>
+<h2 id="四-Harness-Engineering-不谋而合的兴奋">四、Harness Engineering：不谋而合的兴奋</h2>
+<p>在我埋头做项目的同时，AI编程/AI办公领域的新概念也在不断涌现：Multi-Agent（多智能体协作）、Context Engineering（上下文工程）、OpenClaw（社区里叫"龙虾"，2026年初爆火的开源AI Agent框架，GitHub星标飙到27万+）……</p>
+<p>而最让我兴奋的，是 <strong>Harness Engineering</strong>。</p>
+<p>2026年2月，HashiCorp联合创始人、Terraform之父Mitchell Hashimoto在博客里首次提出了这个概念。核心思想用一句话概括就是：</p>
+<blockquote><p><strong>"每当发现Agent犯了一个错误，就花时间设计一个工程化的方案，让Agent永远不再犯同类错误。"</strong></p></blockquote>
+<p>OpenAI随后发文，把Harness Engineering拆解成了三大支柱：</p>
+<div class="table-wrap" role="region" aria-label="支柱表格" tabindex="0"><table><thead><tr><th scope="col">支柱</th><th scope="col">核心问题</th><th scope="col">我的实践对应</th></tr></thead><tbody><tr><td><strong>上下文（Context）</strong></td><td>AI拿到的信息对不对、够不够？</td><td>✅ 文档驱动——架构/API/实现/运维文档体系</td></tr><tr><td><strong>约束与验证（Verify）</strong></td><td>AI产出的东西对不对、合不合规？</td><td>✅ 测试约束——Unit Test + 黑盒测试</td></tr><tr><td><strong>反馈闭环（Feedback Loop）</strong></td><td>AI能不能看到自己的错误并自我修正？</td><td>⚠️ 有所涉及（比如日志规范），但还没系统化做起来</td></tr></tbody></table></div>
+<p>看到这个框架的时候我确实非常兴奋——<strong>这是我第一次在方法论层面，靠着自己在项目中的摸索，跟业界最前沿的理论达成了一致。</strong> 我把这视为自己在AI编码领域达成的一个小成就。</p>
+<p>当然，也必须承认差距。Harness Engineering是一套比我的两条直觉系统化得多、完整得多的工程范式。特别是"反馈闭环"这个维度——如何让AI能够自动感知自己代码的运行结果，自动触发"生成→验证→修复"的循环——是我接下来要重点补足的方向。</p>
+<hr>
+<h2 id="五-写在最后">五、写在最后</h2>
+<p>回顾这三年，几个最深的体会：</p>
+<ol><li><strong>不要以偏概全地给新技术判死刑。</strong> 我因为GPT-3.5在DPDK上的糟糕表现，对AI编码信心全无，白白耽误了两年。这是最贵的一课。</li><li><strong>AI编码的真正挑战不是"让AI写代码"，而是"怎么让AI可靠地写代码"。</strong> 文档和测试不是锦上添花，而是刚需中的刚需。</li><li><strong>"思而不学则殆"。</strong> 独立思考是起点，但要真正形成体系化的认知，还是得多看、多学、多总结。接下来我会继续深入研究Harness Engineering的完整框架，争取整理出一份系统化的输出，反哺整个社区。</li></ol>
+<p><em>写于2026年4月</em></p></div>
+    <footer class="article-footer"><a data-url="https://vult137.github.io/2026/04/ai-coding-journey/" data-id="ai-coding-journey" data-title="从 GPT-3.5 劝退到 Harness Engineering：我的 AI 编码之路" class="article-share-link">Share</a></footer>
+  </div>
+</article></section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">April 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        <li><a href="/2026/04/ai-coding-journey/">从 GPT-3.5 劝退到 Harness Engineering：我的 AI 编码之路</a></li>
+        
+          <li>
+            <a href="/2022/07/27/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 Songyi Wang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1370,3 +1370,21 @@ pre .javascript .function {
   margin-right: 5px;
   display: inline-block;
 }
+
+/* Keep long article titles and comparison tables readable on small screens. */
+.article-title {
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+.article-entry .table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.article-entry .table-wrap table {
+  min-width: 500px;
+}
+.article-entry .table-wrap th,
+.article-entry .table-wrap td {
+  padding: 10px 12px;
+  vertical-align: top;
+}
